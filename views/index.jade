@@ -1,0 +1,117 @@
+extends layout
+
+block head
+  title oykdnRin
+  link(rel="stylesheet", href='stylesheets/app.css')
+
+block content
+  .container
+    .row.center-block
+      h1 ApplePi Controller
+
+      uib-tabset(ng-cloak)
+        uib-tab(heading="リモコン")
+          .container.tab-container
+            .row
+              .col-md-2
+                select.form-control(ng-model="selected_category", ng-options="c for c in categories")
+                  option(value="") 選択してください
+
+            .container.checkbox
+              label
+                input(type="checkbox", ng-checked="chkbox.isSafeMode", ng-click="chkbox.isSafeMode = !chkbox.isSafeMode")
+                | セーフモード(不安定な時用)
+
+            .row(style="margin: 20px 0 0 10px", ng-show="selected_category && count_ir_button[selected_category]")
+              .remocon.btn-toolbar
+                  button.btn.btn-default.btn_ir(ng-click="BtnSendIRClicked(item)", ng-repeat="item in irList | orderBy: Number(dispName) | filter : {category: selected_category, type:{value: 'button'}}") {{ BtnTextAbbreviate(item.dispName) }}
+
+            .row.btn-toolbar(style="margin: 10px 0 0 15px", ng-show="selected_category")
+              button.btn.btn-lg.btn-default(ng-click="BtnSendIRClicked(item)", ng-repeat="item in irList | filter : {category: selected_category, type:{value: 'default'}}") {{item.dispName}}
+
+        uib-tab(heading="登録")
+          .container.tab-container
+            form.form-horizontal(name="RegIRForm", ng-submit="BtnRegIRClicked()", novalidate)
+              .form-group
+                label.control-label.col-xs-4.col-md-2 表示名
+                .col-xs-4.col-md-3
+                  input.form-control(type="text", name="表示名", ng-model="newIR.dispName", required)
+
+              .form-group
+                label.control-label.col-xs-4.col-md-2 受光データ   
+                .col-xs-8.col-md-4
+                  .input-group
+                    span.input-group-btn
+                      button.btn.btn-default(type="button", ng-disabled='newIR._code != "" && newIR._code != null', ng-click="BtnRcvIRClicked()") 受光開始
+                    input.form-control(type="text", ng-model="newIR._code", disabled="disabled")
+                  
+              .form-group
+                label.control-label.col-xs-4.col-md-2 カテゴリ
+                .col-xs-3.col-md-3(ng-show="newIR.canInputCategory", ng-cloak)
+                  input.form-control(type="text", name="カテゴリ", ng-model="newIR._category_input")
+                 
+                .col-xs-4.col-md-2(ng-show="!newIR.canInputCategory", ng-cloak)
+                  select.form-control(name="カテゴリ", ng-model="newIR._category_select", ng-options="c for c in categories")
+                    option(value="") 選択してください
+
+                .col-xs-1.col-md-2
+                  button.btn.btn-primary(type="button", ng-click="BtnChCatClicked()") 選択/入力
+
+              .form-group
+                label.control-label.col-xs-4.col-md-2 タイプ
+                .col-xs-4.col-md-2
+                  select.form-control(name="タイプ", ng-model="newIR.type", ng-options="t.name for t in typeList", required)
+                    option(value="") 選択してください
+
+              .form-group
+                .col-xs-offset-4.col-xs-8.col-md-offset-2.col-md-4
+                  button.btn.btn-primary(type="submit", ng-disabled='!newIR._code || (!newIR._category_select && !newIR._category_input) || RegIRForm.$invalid') 登録
+        
+        uib-tab(heading="削除")
+          .tab-container
+            form.form-horizontal(name="DelIRForm", ng-submit="BtnDelIRClicked()", novalidate)
+              .form-group
+                label.control-label.col-xs-4.col-md-1 削除対象
+                .col-xs-4.col-md-3
+                  select.form-control(name="削除", ng-model="delIR.IR", ng-options="ir.dispName for ir in irList", required)
+                    option(value="") 選択してください
+
+              .form-group
+                .col-xs-offset-4.col-xs-8.col-md-offset-1.col-md-4
+                  button.btn.btn-danger(type="submit", ng-disabled="DelIRForm.$invalid || !delIR.IR") 削除
+
+        uib-tab(heading="DEBUG", ng-show="isDebug")
+          .container.tab-container
+            h3 でばっぐ
+            .col-md-12
+              h4 ・IR編集(玄人向け, JSON)
+            .col-md-2
+              select.form-control(ng-model="_debug_edit.selected", ng-change="SelectDebugChanged()", ng-options="ir.dispName for ir in irList")
+                option(value="") 選択してください
+            .col-md-12(style="margin-top: 10px;")
+              textarea(ng-model="_debug_edit.json", cols="50", rows="15")
+            .col-md-12
+              button.btn.btn-danger(type="button", ng-click="BtnDebugEditIRClicked()") 編集
+
+            .col-md-12
+              h4 ・IR登録(玄人向け, JSON)
+              textarea(ng-model="_debug_new_ir", cols="50", rows="15")
+            .col-md-12
+              button.btn.btn-danger(type="button", ng-click="BtnDebugRegIRClicked()") 登録
+
+            .col-md-12(style="margin-top: 10px;")
+              button.col-md-2.btn.btn-info.btn-sm(type="button", data-toggle="collapse", data-target="#debug") JSON
+              .collapse.col-md-12#debug(style="margin-top: 15px;")
+                .panel.panel-default
+                  .panel-body
+                    h5 受光データ
+                    pre {{ newIR.code | json}}
+                    h5 カテゴリ
+                    pre {{categories|json}}
+                    h5 赤外線データリスト
+                    pre {{irList|json}}
+
+block scripts
+  script(src="/javascripts/index.js")
+
+

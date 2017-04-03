@@ -1,0 +1,65 @@
+/* body */
+body {
+    padding-top: 45px;
+}
+
+/* header */
+.navbar {
+    min-height: 40px !important
+}
+
+.navbar-brand {
+    height: 40px;
+    padding: 10px 15px;
+}
+
+.navbar-nav > li > a {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+
+/* alert */
+.alert-container {
+    padding-top: 10px;
+}
+
+/* タブ */
+.tab-container {
+    /* 枠 */
+    border-style: solid;
+    border-color: #EEEEEE;
+    border-width: 2px;
+
+    /* 角丸 */
+    -webkit-border-radius: 0 0 7px 7px;
+    -moz-border-radius: 0 0 7px 7px;
+    border-radius: 0 0 7px 7px;
+
+    padding: 10px;
+}
+
+/* リモコンボタン */
+.btn_ir {
+    margin-bottom: 5px;
+    width: 80px;
+    height: 80px;
+ }
+
+.remocon {
+    width: 285px;
+    padding: 10px;
+    margin-left: 10px;
+
+    /* 枠 */
+    border-style: solid;
+    border-color: black;
+    border-width: 3px;
+
+    /* 角丸 */
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 77px;
+    border-radius: 7px;
+
+}
+
+
